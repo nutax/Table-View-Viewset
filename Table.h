@@ -5,9 +5,9 @@
 
 template<unsigned CAPACITY, typename... Ts>
 class Table {
-private:
+public:
 	unsigned sz = 0;
-	std::tuple<std::array<Ts, CAPACITY>..., > t;
+	std::tuple<std::array<Ts, CAPACITY>...> t;
 public:
 	unsigned* select_sz() { return &sz; }
 
@@ -25,9 +25,9 @@ public:
 
 template<typename... Ts>
 class View {
-private:
+public:
 	unsigned* sz;
-	std::tuple<Ts* ..., > t;
+	std::tuple<Ts* ...> t;
 public:
 	template<typename T>
 	T* select() { return std::get<T*>(t); }
@@ -37,8 +37,8 @@ public:
 	template<typename Table>
 	static View make(Table table) {
 		View view;
-		sz = table.select_sz();
-		((std::get<Ts*>(t) = table.select<Ts>()), ...);
+		view.sz = table.select_sz();
+		((std::get<Ts*>(view.t) = table.template select<Ts>()), ...);
 		return view;
 	}
 
